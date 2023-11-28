@@ -1,0 +1,23 @@
+.main {
+    display: flex;
+    height: 70px;
+}
+.textarea {
+    width: 250px;
+    height: 100%;
+    padding: 0;
+    border-radius: 10px;
+    box-sizing: border-box;
+    border: solid antiquewhite 1px;
+}
+.add_post_btn {
+    width: 70px;
+    height: 100%;
+    margin-left: 10px;
+    border-radius: 10px;
+    padding: 0;
+    cursor: pointer;
+    box-sizing:content-box;
+    border: solid antiquewhite 0px;
+    background-color: antiquewhite;
+}

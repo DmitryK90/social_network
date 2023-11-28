@@ -1,5 +1,5 @@
 .app-wrapper {
-  width: 1200px;
+  width: 600px;
   margin: 0 auto;
   display: grid;
   /* Всё что находится в внутри тега с этим классом, все первые потомки будут как грид элементы. */
@@ -12,19 +12,4 @@
   grid-template-columns: 2fr 10fr;
   /* Указваем сколько колонок 2 */
   grid-gap: 10px;
-}
-.header {
-  grid-area: h;
-  background-color: antiquewhite;
-}
-.header img {
-  width: 70px;
-}
-.nav {
-  grid-area: n;
-  background-color: antiquewhite;
-}
-.content {
-  grid-area: c;
-  background-color:rgb(242, 254, 237);
 }
