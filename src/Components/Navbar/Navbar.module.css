@@ -2,8 +2,14 @@
     grid-area: n;
     background-color: antiquewhite;
     border-radius: 10px;
-    padding: 10px;
+    padding: 20px;
 }
-.item {
+.item a {
+    color: black;
+    text-decoration: none;
+}
 
+.item a.active {
+    font-weight: bold;
+    color: brown;
 }

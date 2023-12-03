@@ -1,0 +1,54 @@
+.dialogs {
+    display: grid;
+    grid-template-columns: 3fr 10fr;
+}
+.dialogsItems {
+    padding: 5px;    
+}
+
+.dialogsItems .active {
+    font-weight: bold;
+    color: brown;
+}
+
+.dialog {
+    margin: 5px 0 0 0;
+    background-color: rgb(210, 161, 161);
+    padding: 5px 5px 5px 10px;
+    border-radius: 10px;    
+}
+.dialog a {
+    color: black;
+    text-decoration: none;
+}
+
+.messages {
+    padding: 5px;
+}
+
+.textarea {
+    width: 250px;
+    height: 100%;
+    padding: 0;
+    border-radius: 10px;
+    box-sizing: border-box;
+    border: solid antiquewhite 1px;
+}
+
+.addMessage {
+    width: 100px;
+    height: 100%;
+    margin-left: 10px;
+    margin-top: 0;
+    border-radius: 10px;
+    padding: 0;
+    cursor: pointer;
+    box-sizing:content-box;
+    border: solid antiquewhite 0px;
+    background-color: antiquewhite;
+}
+.tb {
+    display: flex;
+    height: 50px;
+    padding: 5px 0 5px;
+}
