@@ -3,10 +3,10 @@ import './App.css';
 import Header from './Components/Header/Header';
 import Navbar from './Components/Navbar/Navbar';
 import Profile from './Components/Profile/Profile';
-import Dialogs from './Components/Dialogs/Dialogs';
+import DialogsContainer from './Components/Dialogs/DialogsContainer';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-const App = (props) => {
+const App = (props) => { // store и state приходят. state - где наши данные. store - функции диспатч и тд.
   return (
     <BrowserRouter>
       <div className='app-wrapper'>
@@ -14,8 +14,8 @@ const App = (props) => {
         <Navbar />
         <div className='app-wrapper-content'>
           <Routes>
-            <Route path='/dialogs/*' element={<Dialogs dialogsPage={props.state.dialogsPage} dispatch = {props.dispatch} />} />
-            <Route path='/profile' element={<Profile profilePage={props.state.profilePage} dispatch = {props.dispatch} />} />
+            <Route path='/dialogs/*' element={<DialogsContainer store={props.store} state={props.state} />} />
+            <Route path='/profile' element={<Profile store={props.store} state={props.state} /* state не передаёт почему-то с нашими данными*/ />} />
             <Route path='/news' element={<Profile />} />
             <Route path='/music' element={<Profile />} />
             <Route path='/settings' element={<Profile />} />
