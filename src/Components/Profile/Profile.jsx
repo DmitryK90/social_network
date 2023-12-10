@@ -1,12 +1,12 @@
 import React from "react";
-import MyPosts from "./MyPosts/MyPosts";
 import ProfileInfo from "./ProfileInfo/ProfileInfo";
+import MyPostsContainer from "./MyPosts/MyPostsContainer";
 
-const Profile = (props) => {
+const Profile = (props) => { //store приходит только
     return (
         <div>
             <ProfileInfo />
-            <MyPosts posts={props.profilePage.posts} newPostText={props.profilePage.newPostText} addPost={props.addPost} updateNewPostText={props.updateNewPostText} />
+            <MyPostsContainer store={props.store} state={props.state} />
         </div>
     )
 }
