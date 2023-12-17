@@ -1,18 +1,23 @@
-import React from "react";
 import { addMessageActionCreator, updateNewMessageActionCreator } from '../../Redux/DialogsReducer'
 import Dialogs from "./Dialogs";
+import { connect } from "react-redux";
 
-const DialogsContainer = (props) => { //store приходит только и state
-    // let state = props.store.getState().dialogsPage;//43 урок.
-    let addMessage = () => {
-        props.store.dispatch(addMessageActionCreator());
+let mapStateToProps = (state) => { // превратить часть state в пропсы.
+    return {
+        dialogsPage: state.dialogsPage
     }
-
-    let onMessageChange = (text) => {
-        props.store.dispatch(updateNewMessageActionCreator(text));
-    }
-
-    return <Dialogs updateNewMessageActionCreator={onMessageChange} sendMessage={addMessage} dialogsPage={props.state} />
 }
+let mapDispatchToProps = (dispatch) => { // передаём колл бэки в пропсы.
+    return {
+        updateNewMessageActionCreator: (text) => {
+            dispatch(updateNewMessageActionCreator(text));
+        },
+        sendMessage: () => {
+            dispatch(addMessageActionCreator());
+        }
+    }
+}
+
+const DialogsContainer = connect(mapStateToProps, mapDispatchToProps)(Dialogs) // SuperDialogsContainer - возвращает новые контейнерную компоненту..
 
 export default DialogsContainer;

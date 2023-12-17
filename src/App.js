@@ -14,8 +14,8 @@ const App = (props) => { // store и state приходят. state - где на
         <Navbar />
         <div className='app-wrapper-content'>
           <Routes>
-            <Route path='/dialogs/*' element={<DialogsContainer store={props.store} state={props.state} />} />
-            <Route path='/profile' element={<Profile store={props.store} state={props.state} /* state не передаёт почему-то с нашими данными*/ />} />
+            <Route path='/dialogs/*' element={<DialogsContainer />} />
+            <Route path='/profile' element={<Profile />} />
             <Route path='/news' element={<Profile />} />
             <Route path='/music' element={<Profile />} />
             <Route path='/settings' element={<Profile />} />
