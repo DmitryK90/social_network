@@ -6,7 +6,7 @@ const Profile = (props) => { //store приходит только
     return (
         <div>
             <ProfileInfo />
-            <MyPostsContainer store={props.store} state={props.state} />
+            <MyPostsContainer />
         </div>
     )
 }
