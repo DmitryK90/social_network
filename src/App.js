@@ -3,6 +3,7 @@ import './App.css';
 import Header from './Components/Header/Header';
 import Navbar from './Components/Navbar/Navbar';
 import Profile from './Components/Profile/Profile';
+import UsersContainer from './Components/Users/UsersContainer'
 import DialogsContainer from './Components/Dialogs/DialogsContainer';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
@@ -16,6 +17,7 @@ const App = (props) => { // store и state приходят. state - где на
           <Routes>
             <Route path='/dialogs/*' element={<DialogsContainer />} />
             <Route path='/profile' element={<Profile />} />
+            <Route path='/users' element={<UsersContainer />} />
             <Route path='/news' element={<Profile />} />
             <Route path='/music' element={<Profile />} />
             <Route path='/settings' element={<Profile />} />
