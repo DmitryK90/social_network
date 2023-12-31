@@ -1,32 +1,43 @@
 import React from "react";
 import axios from "axios";
 import Users from './Users'
+import Preloader from '../common/Preloader/Preloader'
 import { connect } from "react-redux";
-import { followAC, unfollowAC, setUsersAC, setCurrentPageAC, setUsersTotalCountAC } from "../../Redux/UsersReducer";
+import { followAC, unfollowAC, setUsersAC, setCurrentPageAC, setUsersTotalCountAC, toggleIsFetchingAC } from "../../Redux/UsersReducer";
 
 // КОНТЕЙНЕРНАЯ КОМПОНЕНТА, ИМЕЕТ САМУ КОМПОНЕНТУ КЛАССОВУЮ И ВТОРАЯ КОНТЕЙНЕРНАЯ КОМПОНЕНТА КОТОРАЯ ПОЛУЧАЕТСЯ С ПОМОЩЬЮ CONNECT.
 
 class UsersContainer extends React.Component {
     componentDidMount() {
+        this.props.toggleIsFetchingAC(true); // иконка загрузки отображается.
         axios.get('https://social-network.samuraijs.com/api/1.0/users?page=${this.props.currentPage}&count=${this.props.pageSize}').then(response => { // ?page - параметры
-            this.props.setUsers(response.data.items);
-            this.props.setTotalUsersCount(response.data.totalCount);
+            // console.log(response.data)
+            this.props.toggleIsFetchingAC(false); // выключаем иконку загрузки.
+            this.props.setUsersAC(response.data.items); // в setUsers кидаем всех юзеров.
+            this.props.setUsersTotalCountAC(response.data.totalCount); // в setTotalUsersCount кидаем общее кол-во юзеров.
         })// запрос на сервер, НЕ МЕНЯЮТСЯ ПОЛЬЗОВАТЕЛИ!
     }
     onPageChanged = (pageNumber) => {
-        this.props.setCurrentPage(pageNumber)
+        this.props.setCurrentPageAC(pageNumber); // изменяем currentPage, это номер активной страницы.
+        this.props.toggleIsFetchingAC(true); // иконка загрузки отображается.
         axios.get('https://social-network.samuraijs.com/api/1.0/users?page=${pageNumber}&count=${this.props.pageSize}').then(response => { // ?page - параметры
-            this.props.setUsers(response.data.items)
+            console.log(pageNumber, response.data); // ПОЧЕМУ-ТО СЕРВАК ПРИСЫЛАЕТ ТОТ ЖЕ СПИСОК! НЕЗАВИСИМО ОТ ИЗМЕНЕНИЯ СТРАНИЦЫ! ХОТЯ ВСЁ МЕНЯЕТСЯ В СТЕЙТЕ!
+            this.props.toggleIsFetchingAC(false); // выключаем иконку загрузки.
+            this.props.setUsersAC(response.data.items);
         })
     }
     render() {
-        return <Users totalUsersCount={this.props.totalUsersCount}
-            pageSize={this.props.pageSize}
-            currentPage={this.props.currentPage}
-            onPageChanged={this.onPageChanged }
-            users={this.props.users}
-            unfollow={this.props.unfollow}
-            follow={this.props.follow} />
+        return <>
+            {this.props.isFetching ? <Preloader /> : null}
+            <Users totalUsersCount={this.props.totalUsersCount}
+                pageSize={this.props.pageSize}
+                currentPage={this.props.currentPage}
+                onPageChanged={this.onPageChanged}
+                users={this.props.users}
+                follow={this.props.followAC}
+                unfollow={this.props.unfollowAC}
+            />
+        </>
     }
 }
 
@@ -35,28 +46,33 @@ let mapStateToProps = (state) => {
         users: state.usersPage.users,
         pageSize: state.usersPage.pageSize,
         totalUsersCount: state.usersPage.totalUsersCount,
-        currentPage: state.usersPage.currentPage
+        currentPage: state.usersPage.currentPage,
+        isFetching: state.usersPage.isFetching
     }
 }//приходит все в props <Users /> всё достаёт из state
 
-let mapDispatchToProps = (dispatch) => {
-    return {
-        follow: (userId) => {
-            dispatch(followAC(userId))
-        },
-        unfollow: (userId) => {
-            dispatch(unfollowAC(userId))
-        },
-        setUsers: (users) => {
-            dispatch(setUsersAC(users))
-        },
-        setCurrentPage: (pageNumber) => {
-            dispatch(setCurrentPageAC(pageNumber))
-        },
-        setTotalUsersCount: (totalCount) => {
-            dispatch(setUsersTotalCountAC(totalCount))
-        }
-    }
-} // это всё закинется в <Users /> в props.
+// let mapDispatchToProps = (dispatch) => {
+//     return {
+//         follow: (userId) => {
+//             dispatch(followAC(userId))
+//         },
+//         unfollow: (userId) => {
+//             dispatch(unfollowAC(userId))
+//         },
+//         setUsers: (users) => {
+//             dispatch(setUsersAC(users))
+//         },
+//         setCurrentPage: (pageNumber) => {
+//             dispatch(setCurrentPageAC(pageNumber))
+//         },
+//         setTotalUsersCount: (totalCount) => {
+//             dispatch(setUsersTotalCountAC(totalCount))
+//         },
+//         toggleIsFetching: (isFetching) => {
+//             dispatch(toggleIsFetchingAC(isFetching))
+//         }
+//     }
+// } // это всё закинется в <Users /> в props.
 
-export default connect(mapStateToProps, mapDispatchToProps)(UsersContainer); // закидывает в <UsersContainer /> пропсы.
+export default connect(mapStateToProps, { followAC, unfollowAC, setUsersAC, setCurrentPageAC, setUsersTotalCountAC, toggleIsFetchingAC })(UsersContainer); // закидывает в <UsersContainer /> пропсы.
+// export default connect(mapStateToProps, mapDispatchToProps)(UsersContainer); // закидывает в <UsersContainer /> пропсы.
