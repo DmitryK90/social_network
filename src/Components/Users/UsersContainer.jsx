@@ -3,27 +3,27 @@ import axios from "axios";
 import Users from './Users'
 import Preloader from '../common/Preloader/Preloader'
 import { connect } from "react-redux";
-import { followAC, unfollowAC, setUsersAC, setCurrentPageAC, setUsersTotalCountAC, toggleIsFetchingAC } from "../../Redux/UsersReducer";
+import { follow, unfollow, setUsers, setCurrentPage, setTotalUsersCount, toggleIsFetching } from "../../Redux/UsersReducer";
 
 // КОНТЕЙНЕРНАЯ КОМПОНЕНТА, ИМЕЕТ САМУ КОМПОНЕНТУ КЛАССОВУЮ И ВТОРАЯ КОНТЕЙНЕРНАЯ КОМПОНЕНТА КОТОРАЯ ПОЛУЧАЕТСЯ С ПОМОЩЬЮ CONNECT.
 
 class UsersContainer extends React.Component {
     componentDidMount() {
-        this.props.toggleIsFetchingAC(true); // иконка загрузки отображается.
+        this.props.toggleIsFetching(true); // иконка загрузки отображается.
         axios.get('https://social-network.samuraijs.com/api/1.0/users?page=${this.props.currentPage}&count=${this.props.pageSize}').then(response => { // ?page - параметры
             // console.log(response.data)
-            this.props.toggleIsFetchingAC(false); // выключаем иконку загрузки.
-            this.props.setUsersAC(response.data.items); // в setUsers кидаем всех юзеров.
-            this.props.setUsersTotalCountAC(response.data.totalCount); // в setTotalUsersCount кидаем общее кол-во юзеров.
+            this.props.toggleIsFetching(false); // выключаем иконку загрузки.
+            this.props.setUsers(response.data.items); // в setUsers кидаем всех юзеров.
+            this.props.setTotalUsersCount(response.data.totalCount); // в setTotalUsersCount кидаем общее кол-во юзеров.
         })// запрос на сервер, НЕ МЕНЯЮТСЯ ПОЛЬЗОВАТЕЛИ!
     }
     onPageChanged = (pageNumber) => {
-        this.props.setCurrentPageAC(pageNumber); // изменяем currentPage, это номер активной страницы.
-        this.props.toggleIsFetchingAC(true); // иконка загрузки отображается.
+        this.props.setCurrentPage(pageNumber); // изменяем currentPage, это номер активной страницы.
+        this.props.toggleIsFetching(true); // иконка загрузки отображается.
         axios.get('https://social-network.samuraijs.com/api/1.0/users?page=${pageNumber}&count=${this.props.pageSize}').then(response => { // ?page - параметры
-            console.log(pageNumber, response.data); // ПОЧЕМУ-ТО СЕРВАК ПРИСЫЛАЕТ ТОТ ЖЕ СПИСОК! НЕЗАВИСИМО ОТ ИЗМЕНЕНИЯ СТРАНИЦЫ! ХОТЯ ВСЁ МЕНЯЕТСЯ В СТЕЙТЕ!
-            this.props.toggleIsFetchingAC(false); // выключаем иконку загрузки.
-            this.props.setUsersAC(response.data.items);
+            console.log(pageNumber, response.data); // ПОЧЕМУ-ТО СЕРВАК ПРИСЫЛАЕТ ТОТ ЖЕ СПИСОК! НЕЗАВИСИМО ОТ ИЗМЕНЕНИЯ СТРАНИЦЫ! ХОТЯ ВСЁ МЕНЯЕТСЯ В СТЕЙТЕ!this.props.currentPage нет раб!
+            this.props.toggleIsFetching(false); // выключаем иконку загрузки.
+            this.props.setUsers(response.data.items); // в массив users в state подгружаем список пользователей с сервака.
         })
     }
     render() {
@@ -34,8 +34,8 @@ class UsersContainer extends React.Component {
                 currentPage={this.props.currentPage}
                 onPageChanged={this.onPageChanged}
                 users={this.props.users}
-                follow={this.props.followAC}
-                unfollow={this.props.unfollowAC}
+                follow={this.props.follow}
+                unfollow={this.props.unfollow}
             />
         </>
     }
@@ -74,5 +74,7 @@ let mapStateToProps = (state) => {
 //     }
 // } // это всё закинется в <Users /> в props.
 
-export default connect(mapStateToProps, { followAC, unfollowAC, setUsersAC, setCurrentPageAC, setUsersTotalCountAC, toggleIsFetchingAC })(UsersContainer); // закидывает в <UsersContainer /> пропсы.
-// export default connect(mapStateToProps, mapDispatchToProps)(UsersContainer); // закидывает в <UsersContainer /> пропсы.
+
+
+// export default connect(mapStateToProps, { followAC, unfollowAC, setUsersAC, setCurrentPageAC, setUsersTotalCountAC, toggleIsFetchingAC })(UsersContainer); // закидывает в <UsersContainer /> пропсы.
+export default connect(mapStateToProps, {follow, unfollow, setUsers, setCurrentPage, setTotalUsersCount, toggleIsFetching})(UsersContainer); // закидывает в <UsersContainer /> пропсы.

@@ -10,7 +10,7 @@ let initialState = {
     pageSize: 10,
     totalUsersCount: 0,
     currentPage: 1,
-    isFetching: false
+    isFetching: false,
 }
 
 const UsersReducer = (state = initialState, action) => {
@@ -64,11 +64,11 @@ const UsersReducer = (state = initialState, action) => {
     }
 }
 
-export const followAC = (userId) => ({ type: FOLLOW, userId }); // userId: userId, в коде сокращенно можно писать если ключ и значение одинаковые.
-export const unfollowAC = (userId) => ({ type: UNFOLLOW, userId });
-export const setUsersAC = (users) => ({ type: SET_USERS, users });
-export const setCurrentPageAC = (currentPage) => ({ type: SET_CURRENT_PAGE, currentPage });
-export const setUsersTotalCountAC = (totalUsersCount) => ({ type: SET_TOTAL_USERS_COUNT, count: totalUsersCount });
-export const toggleIsFetchingAC = (isFetching) => ({ type: TOGGLE_IS_FETCHING, isFetching });
+export const follow = (userId) => ({ type: FOLLOW, userId }); // userId: userId, в коде сокращенно можно писать если ключ и значение одинаковые.
+export const unfollow = (userId) => ({ type: UNFOLLOW, userId });
+export const setUsers = (users) => ({ type: SET_USERS, users });
+export const setCurrentPage = (currentPage) => ({ type: SET_CURRENT_PAGE, currentPage });
+export const setTotalUsersCount = (totalUsersCount) => ({ type: SET_TOTAL_USERS_COUNT, count: totalUsersCount });
+export const toggleIsFetching = (isFetching) => ({ type: TOGGLE_IS_FETCHING, isFetching });
 
 export default UsersReducer;
