@@ -7,3 +7,10 @@
   .header img {
     width: 70px;
   }
+  .loginBlock {
+    float: right;
+  }
+  .loginBlock a {
+    color: black;
+    padding: 10px 20px 0 0;
+  }
