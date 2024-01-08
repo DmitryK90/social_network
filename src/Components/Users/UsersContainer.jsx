@@ -1,30 +1,17 @@
 import React from "react";
-import axios from "axios";
 import Users from './Users'
 import Preloader from '../common/Preloader/Preloader'
 import { connect } from "react-redux";
-import { follow, unfollow, setUsers, setCurrentPage, setTotalUsersCount, toggleIsFetching } from "../../Redux/UsersReducer";
+import { follow, unfollow, setCurrentPage, toggleIsFollowingProgress, getUsers } from "../../Redux/UsersReducer";
 
 // КОНТЕЙНЕРНАЯ КОМПОНЕНТА, ИМЕЕТ САМУ КОМПОНЕНТУ КЛАССОВУЮ И ВТОРАЯ КОНТЕЙНЕРНАЯ КОМПОНЕНТА КОТОРАЯ ПОЛУЧАЕТСЯ С ПОМОЩЬЮ CONNECT.
 
 class UsersContainer extends React.Component {
     componentDidMount() {
-        this.props.toggleIsFetching(true); // иконка загрузки отображается.
-        axios.get('https://social-network.samuraijs.com/api/1.0/users?page=${this.props.currentPage}&count=${this.props.pageSize}').then(response => { // ?page - параметры
-            // console.log(response.data)
-            this.props.toggleIsFetching(false); // выключаем иконку загрузки.
-            this.props.setUsers(response.data.items); // в setUsers кидаем всех юзеров.
-            this.props.setTotalUsersCount(response.data.totalCount); // в setTotalUsersCount кидаем общее кол-во юзеров.
-        })// запрос на сервер, НЕ МЕНЯЮТСЯ ПОЛЬЗОВАТЕЛИ!
+        this.props.getUsers(this.props.currentPage, this.props.pageSize); // вызывает колбэк thunk из UsersReducer. Получить список юзеров, там идёт запрос на сервер.
     }
     onPageChanged = (pageNumber) => {
-        this.props.setCurrentPage(pageNumber); // изменяем currentPage, это номер активной страницы.
-        this.props.toggleIsFetching(true); // иконка загрузки отображается.
-        axios.get('https://social-network.samuraijs.com/api/1.0/users?page=${pageNumber}&count=${this.props.pageSize}').then(response => { // ?page - параметры
-            console.log(pageNumber, response.data); // ПОЧЕМУ-ТО СЕРВАК ПРИСЫЛАЕТ ТОТ ЖЕ СПИСОК! НЕЗАВИСИМО ОТ ИЗМЕНЕНИЯ СТРАНИЦЫ! ХОТЯ ВСЁ МЕНЯЕТСЯ В СТЕЙТЕ!this.props.currentPage нет раб!
-            this.props.toggleIsFetching(false); // выключаем иконку загрузки.
-            this.props.setUsers(response.data.items); // в массив users в state подгружаем список пользователей с сервака.
-        })
+        this.props.getUsers(pageNumber, this.props.pageSize); // вызывает колбэк thunk из UsersReducer. При перелистывании запрашиваем новых пользователей.        
     }
     render() {
         return <>
@@ -36,6 +23,7 @@ class UsersContainer extends React.Component {
                 users={this.props.users}
                 follow={this.props.follow}
                 unfollow={this.props.unfollow}
+                followingInProgress={this.props.followingInProgress}
             />
         </>
     }
@@ -47,7 +35,8 @@ let mapStateToProps = (state) => {
         pageSize: state.usersPage.pageSize,
         totalUsersCount: state.usersPage.totalUsersCount,
         currentPage: state.usersPage.currentPage,
-        isFetching: state.usersPage.isFetching
+        isFetching: state.usersPage.isFetching,
+        followingInProgress: state.usersPage.followingInProgress
     }
 }//приходит все в props <Users /> всё достаёт из state
 
@@ -77,4 +66,4 @@ let mapStateToProps = (state) => {
 
 
 // export default connect(mapStateToProps, { followAC, unfollowAC, setUsersAC, setCurrentPageAC, setUsersTotalCountAC, toggleIsFetchingAC })(UsersContainer); // закидывает в <UsersContainer /> пропсы.
-export default connect(mapStateToProps, {follow, unfollow, setUsers, setCurrentPage, setTotalUsersCount, toggleIsFetching})(UsersContainer); // закидывает в <UsersContainer /> пропсы.
+export default connect(mapStateToProps, { follow, unfollow, setCurrentPage, toggleIsFollowingProgress, getUsers })(UsersContainer); // закидывает в <UsersContainer /> пропсы.

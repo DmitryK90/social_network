@@ -15,7 +15,6 @@ let Users = (props) => {
         }
 
     }
-
     return <div>
         <div>
             {pages.map(p => {
@@ -25,32 +24,35 @@ let Users = (props) => {
                     }}>{p}</span>
             })}
         </div>
-        {
-            props.users.map(u => <div key={u.id}>
-                <span>
-                    <div>
-                        <NavLink to={'/profile/' + u.id}>
-                            <img src={u.photos.small != null ? u.photos.small : userPhoto} className={styles.usersPhoto} alt="/"></img>
-                        </NavLink>
-                    </div>
-                    <div>
-                        {u.followed
-                            ? <button onClick={() => (props.unfollow(u.id))}>Unfollow</button>
-                            : <button onClick={() => (props.follow(u.id))}>Follow</button>}
+        {props.users.map(u => <div key={u.id}>
+            <span>
+                <div>
+                    <NavLink to={'/profile/' + u.id}>
+                        <img src={u.photos.small != null ? u.photos.small : userPhoto} className={styles.usersPhoto} alt="/"></img>
+                    </NavLink>
+                </div>
+                <div>
+                    {u.followed
+                        ? <button disabled={props.followingInProgress.some(id => id === u.id)} onClick={() => {
+                            props.unfollow(u.id) // отписываемся от пользователя, через api.js
+                        }}>Unfollow</button>
+                        : <button disabled={props.followingInProgress.some(id => id === u.id)} onClick={() => {
+                            props.follow(u.id) // подписываемся на пользователя, через api.js
+                        }}>Follow</button>}
 
-                    </div>
+                </div>
+            </span>
+            <span>
+                <span>
+                    <div>{u.name}</div>
+                    <div>{u.status}</div>
                 </span>
                 <span>
-                    <span>
-                        <div>{u.name}</div>
-                        <div>{u.status}</div>
-                    </span>
-                    <span>
-                        <div>{'u.location.country'}</div>
-                        <div>{'u.location.city'}</div>
-                    </span>
+                    <div>{'u.location.country'}</div>
+                    <div>{'u.location.city'}</div>
                 </span>
-            </div>)
+            </span>
+        </div>)
         }
     </div>
 }
