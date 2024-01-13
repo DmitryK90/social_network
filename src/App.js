@@ -33,3 +33,4 @@ const App = (props) => { // store и state приходят. state - где на
 }
 
 export default App;
+//asd
