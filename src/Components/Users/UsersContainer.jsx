@@ -3,6 +3,8 @@ import Users from './Users'
 import Preloader from '../common/Preloader/Preloader'
 import { connect } from "react-redux";
 import { follow, unfollow, setCurrentPage, toggleIsFollowingProgress, getUsers } from "../../Redux/UsersReducer";
+import { WithAuthRedirect } from "../../hoc/withAuthRedirect";
+import { compose } from "redux";
 
 // КОНТЕЙНЕРНАЯ КОМПОНЕНТА, ИМЕЕТ САМУ КОМПОНЕНТУ КЛАССОВУЮ И ВТОРАЯ КОНТЕЙНЕРНАЯ КОМПОНЕНТА КОТОРАЯ ПОЛУЧАЕТСЯ С ПОМОЩЬЮ CONNECT.
 
@@ -40,30 +42,14 @@ let mapStateToProps = (state) => {
     }
 }//приходит все в props <Users /> всё достаёт из state
 
-// let mapDispatchToProps = (dispatch) => {
-//     return {
-//         follow: (userId) => {
-//             dispatch(followAC(userId))
-//         },
-//         unfollow: (userId) => {
-//             dispatch(unfollowAC(userId))
-//         },
-//         setUsers: (users) => {
-//             dispatch(setUsersAC(users))
-//         },
-//         setCurrentPage: (pageNumber) => {
-//             dispatch(setCurrentPageAC(pageNumber))
-//         },
-//         setTotalUsersCount: (totalCount) => {
-//             dispatch(setUsersTotalCountAC(totalCount))
-//         },
-//         toggleIsFetching: (isFetching) => {
-//             dispatch(toggleIsFetchingAC(isFetching))
-//         }
-//     }
-// } // это всё закинется в <Users /> в props.
+export default compose(
+    connect(mapStateToProps, { follow, unfollow, setCurrentPage, toggleIsFollowingProgress, getUsers }),
+    WithAuthRedirect
+)(UsersContainer);
+// закидывает в <UsersContainer /> пропсы.
+//WithAuthRedirect - передаём в HOC наш UsersContainer, он следит за авторизацией, если есть, то отрисовывает UsersContainer,
+// если нет, то редиректит на страничку /login.
 
-
-
-// export default connect(mapStateToProps, { followAC, unfollowAC, setUsersAC, setCurrentPageAC, setUsersTotalCountAC, toggleIsFetchingAC })(UsersContainer); // закидывает в <UsersContainer /> пропсы.
-export default connect(mapStateToProps, { follow, unfollow, setCurrentPage, toggleIsFollowingProgress, getUsers })(UsersContainer); // закидывает в <UsersContainer /> пропсы.
+ // ()() два вызова функции compose, вторые () означают вызов того, что вернули первые(), а не вызов два раза одинакового compose.
+//более подробно про compose, она объединяет наши две функции WithAuthRedirect и connect, и вызывает их с параметром компонента UsersContainer
+//по сути делает WithAuthRedirect(UsersContainer). Где WithAuthRedirect отслеживает авторизацию на сервер, и перенаправляет на стр. /login если не авториз.

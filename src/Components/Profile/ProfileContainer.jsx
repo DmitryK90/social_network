@@ -1,11 +1,12 @@
 import React from "react";
 import Profile from "./Profile";
 import { connect } from "react-redux";
-import { setUserProfile } from '../../Redux/ProfileReducer'
+import { getUserProfile } from '../../Redux/ProfileReducer'
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import { WithAuthRedirect } from "../../hoc/withAuthRedirect";
+import { compose } from "redux";
 
-export function withRouter(Children) {
+export function withRouter(Children) { // Children - передаём компоненту.
     return (props) => {
         const match = { params: useParams() };
         return <Children {...props} match={match} />
@@ -14,17 +15,13 @@ export function withRouter(Children) {
 
 class ProfileContainer extends React.Component {
     componentDidMount() { // метод жизненного цикла.(componentDidMount - компонента уже вмонтирована)
-        console.log(this.props)
         let userId = this.props.match.params.userId;
         if (!userId) {
             userId = 2
         }
-        axios.get('https://social-network.samuraijs.com/api/1.0/profile/' + userId).then(response => { // ?page - параметры
-            this.props.setUserProfile(response.data); // приходит в response объект с инфой пользователя, который указан после .../profile/тут.
-        })
+        this.props.getUserProfile(userId)       
     }
-
-    render() {
+    render() {        
         return (
             <Profile {...this.props} profile={this.props.profile} />
         )
@@ -32,7 +29,13 @@ class ProfileContainer extends React.Component {
 }
 
 let mapStateToProps = (state) => ({
-    profile: state.profilePage.profile
+    profile: state.profilePage.profile,
 })
 
-export default connect(mapStateToProps, { setUserProfile })(withRouter(ProfileContainer));
+export default compose(
+    connect(mapStateToProps, { getUserProfile }),
+    withRouter,
+    WithAuthRedirect
+)(ProfileContainer); // ()() два вызова функции compose, вторые () означают вызов того, что вернули первые(), а не вызов два раза одинакового compose.
+//более подробно про compose, она объединяет наши функции WithAuthRedirect, withRouter и connect, и вызывает их с параметром компонента ProfileContainer
+//по сути делает WithAuthRedirect(ProfileContainer). Где WithAuthRedirect отслеживает авторизацию на сервер, и перенаправляет на стр. /login если не авториз.

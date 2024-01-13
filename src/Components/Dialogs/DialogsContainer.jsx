@@ -1,10 +1,12 @@
 import { addMessageActionCreator, updateNewMessageActionCreator } from '../../Redux/DialogsReducer'
 import Dialogs from "./Dialogs";
 import { connect } from "react-redux";
+import { WithAuthRedirect } from '../../hoc/withAuthRedirect';
+import { compose } from 'redux';
 
 let mapStateToProps = (state) => { // превратить часть state в пропсы.
     return {
-        dialogsPage: state.dialogsPage
+        dialogsPage: state.dialogsPage,
     }
 }
 let mapDispatchToProps = (dispatch) => { // передаём колл бэки в пропсы.
@@ -18,6 +20,9 @@ let mapDispatchToProps = (dispatch) => { // передаём колл бэки �
     }
 }
 
-const DialogsContainer = connect(mapStateToProps, mapDispatchToProps)(Dialogs) // SuperDialogsContainer - возвращает новые контейнерную компоненту..
-
-export default DialogsContainer;
+export default compose(
+    connect(mapStateToProps, mapDispatchToProps),
+    WithAuthRedirect       
+)(Dialogs); // ()() два вызова функции compose, вторые () означают вызов того, что вернули первые(), а не вызов два раза одинакового compose.
+//более подробно про compose, она объединяет наши две функции WithAuthRedirect и connect, и вызывает их с параметром компонента Dialogs
+//по сути делает WithAuthRedirect(Dialogs). Где WithAuthRedirect отслеживает авторизацию на сервер, и перенаправляет на стр. /login если не авториз.
