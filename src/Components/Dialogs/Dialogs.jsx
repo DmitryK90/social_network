@@ -2,6 +2,7 @@ import React from "react";
 import style from './Dialogs.module.css'
 import DialogItem from "./DialogItem/DialogsItem";
 import Message from "./Message/Message";
+import { Navigate  } from "react-router-dom";
 // import { addMessageActionCreator, updateNewMessageActionCreator } from '../../Redux/DialogsReducer'
 
 const Dialogs = (props) => { //store приходит только
@@ -20,6 +21,8 @@ const Dialogs = (props) => { //store приходит только
         let text = e.target.value;
         props.updateNewMessageActionCreator(text);
     }
+
+    if(!props.isAuth) return <Navigate to={'/login'} /> // компонента из react-router-dom которая делает редирект на Login, если не залогиненый(isAuth = false)
 
     return (
         <div className={style.dialogs}>
