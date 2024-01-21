@@ -6,6 +6,7 @@ import usersReducer from './UsersReducer';
 import authReducer from './AuthReducer';
 import {reducer as formReducer} from 'redux-form'; // для создания и отправки форм.
 import {thunk} from 'redux-thunk';
+import AppReducer from "./AppReducer";
 
 let reducers = combineReducers({
     profilePage: profileReducer,
@@ -13,6 +14,7 @@ let reducers = combineReducers({
     sidebar: sidebarReducer,
     usersPage: usersReducer,
     auth: authReducer,
+    app: AppReducer,
     form: formReducer
 })
 

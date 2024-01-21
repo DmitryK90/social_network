@@ -44,7 +44,7 @@ let mapStateToProps = (state) => {
 
 export default compose(
     connect(mapStateToProps, { follow, unfollow, setCurrentPage, toggleIsFollowingProgress, getUsers }),
-    WithAuthRedirect
+    // WithAuthRedirect
 )(UsersContainer);
 // закидывает в <UsersContainer /> пропсы.
 //WithAuthRedirect - передаём в HOC наш UsersContainer, он следит за авторизацией, если есть, то отрисовывает UsersContainer,

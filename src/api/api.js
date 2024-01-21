@@ -7,6 +7,7 @@ const instance = axios.create({
 }); //создаёт экземпляр axios, шже храним какие-то настройки.
 
 // читать документацию на серваке как и куда запросы делать, иначе не понятно.
+// там точно указано на какие энд пойнты делать и каким способом делать запрос, тогда понятно станет написанное.
 export const usersAPI = {
     getUsers(currentPage = 1, pageSize = 10) {
         return instance.get(`users?page=${currentPage}&count=${pageSize}`) // по факту будет - (baseUrl + `users?page=${currentPage}&count=${pageSize}`)(но у нас забыл baseURL)
@@ -38,7 +39,15 @@ export const profileAPI = {
 
 export const authAPI = {
     me() {
-        return instance.get(`auth/me`)
+        return instance.get(`auth/me`);
+    },
+    login(email, password, rememberMe = false) {
+        return instance.post(`auth/login`, { email, password, rememberMe }); // в данном случае на серв.ещё отправляем объект с данными.
+            // с каким надо смотреть документацию на серваке, что он должен принимать.
+    },
+    logout(email, password, rememberMe = false) {
+        return instance.delete(`auth/login`); // в данном случае на серв.ещё отправляем объект с данными.
+        // с каким надо смотреть документацию на серваке, что он должен принимать.
     }
 } 
 

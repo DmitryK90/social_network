@@ -2,6 +2,10 @@ import React from "react";
 import {Field, reduxForm} from "redux-form";
 import {Input} from "../common/FormsControls/FormsControls";
 import {required} from "../../Utils/validators/validators";
+import {connect} from "react-redux";
+import {login} from "../../Redux/AuthReducer";
+import {Navigate} from "react-router-dom";
+import style from './../common/FormsControls/FormsControls.module.css'
 
 const LoginForm = (props) => {
     return ( // Field аналог input в библ. redux-form. Name - под этим свойством уйдёт на сервак.
@@ -11,22 +15,24 @@ const LoginForm = (props) => {
         // из формы)), что вот они данные и их засабмитили из формы.
         <form onSubmit={props.handleSubmit}>
             <div>
-                <Field placeholder={'Login'}
-                       name={'login'}
+                <Field placeholder={'Email'}
+                       name={'email'}
                        validate={[required]}
                        component={Input}/>
             </div>
             <div>
                 <Field placeholder={'Password'}
-                       name={'Password'}
+                       type={'password'}
+                       name={'password'}
                        validate={[required]}
                        component={Input}/>
             </div>
             <div>
                 <Field type={"checkbox"}
-                       name={'RememberMe'}
+                       name={'rememberMe'}
                        component={Input}/> remember me
             </div>
+            {props.error && <div className={style.formSummaryError}>Error</div>}
             <div>
                 <button>Login</button>
             </div>
@@ -38,9 +44,13 @@ const LoginReduxForm = reduxForm({ // оборачиваем компонент�
     // Только form этот это не то что в store, State.form.Login - эот form задаётся в store.
 })(LoginForm)
 
-const Login = (props) => {
+const Login = (props) => { // сюда приходит ещё колбэк login(не thunk creator, он в connect-е обрабатывается, а сюда уже сам колбэк приходит).
     const onSubmit = (formData) => {
+        props.login(formData.email, formData.password, formData.rememberMe)
+    }
 
+    if(props.isAuth) { // если залогинились, то редирект на страницу Profile.
+        return <Navigate to={'/profile'} />
     }
     return <div>
         <h1>Login</h1>
@@ -48,4 +58,10 @@ const Login = (props) => {
     </div>
 }
 
-export default Login;
+const mapStateToProps = (state) => {
+    return {
+        isAuth: state.auth.isAuth
+    }
+}
+
+export default connect(mapStateToProps, {login})(Login); // в Login добавили колбэки из AuthReducer, а именно функцию thunk creator.
