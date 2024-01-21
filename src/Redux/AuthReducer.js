@@ -1,4 +1,5 @@
-import { authAPI } from '../api/api'
+import {authAPI} from '../api/api'
+import {stopSubmit} from "redux-form";
 
 const SET_USER_DATA = 'SET_USER_DATA';
 
@@ -14,9 +15,8 @@ const AuthReducer = (state = initialState, action) => {
         case SET_USER_DATA: {
             return {
                 ...state,
-                ...action.data, // дуструкт.экшена.
-                isAuth: true,
-            };
+                ...action.payload // дуструкт.экшена.
+            }
         }
         default:
             return {
@@ -25,16 +25,38 @@ const AuthReducer = (state = initialState, action) => {
     }
 }
 
-const SetAuthUserData = (userId, email, login) => ({ type: SET_USER_DATA, data: {userId, email, login} });
+export const setAuthUserData = (userId, email, login, isAuth) => ({
+    type: SET_USER_DATA,
+    payload: {userId, email, login, isAuth}
+}); // Экшен креатор.
 
-export const getAuthUserData = () => dispatch => {
-        authAPI.me().then(response => { // приходят данные с авториз., withCredentials проверка паторизации.
-            if (response.data.resultCode ===0) { // resultCode это парам. на серваке который отобр. аторизацию, 0 - авторизирован, 1 - нет.
-                let {Id, login, email} = response.data.data; // деструктуризация.
-                dispatch(SetAuthUserData(Id, login, email)); // соблюдать последовательность, что было в редьюсере!
-            }
-        })
-    }
+// ниже это thunk creator:
+export const getAuthUserData = () => (dispatch) => {
+    authAPI.me().then(response => { // приходят данные с авториз., withCredentials проверка паторизации.
+        if (response.data.resultCode === 0) { // resultCode это парам. на серваке который отобр. аторизацию, 0 - авторизирован, 1 - нет.
+            let {id, login, email} = response.data.data; // деструктуризация ответа.
+            dispatch(setAuthUserData(id, email, login, true)); // соблюдать последовательность, что было в редьюсере!
+        }
+    })
+}
 
+export const login = (email, password, rememberMe) => (dispatch) => { // вызывает его из Login.jsx.
+    authAPI.login(email, password, rememberMe).then(response => { // приходят данные с авториз., withCredentials проверка паторизации.
+        if (response.data.resultCode === 0) { // resultCode это парам. на серваке который отобр. аторизацию, 0 - авторизирован, 1 - нет(или не прав. введены данные лог и пар).
+            dispatch(getAuthUserData())
+        } else {
+            let message = response.data.messages.length > 0 ? response.data.messages[0] : 'Some error'; // с сервака ответ будет в чём ошибка в логине или пароле, в message придёт массив с одним значением.
+            dispatch(stopSubmit('login', {_error: message})); //спец. экшен из redux-form, который прекращает submit формы. Пишем что стопаем 'login', вторым параметром передаём объект где указываем проблемные свойства.
+        }
+    })
+}
+
+export const logout = () => (dispatch) => { // сервак удаляет куку, и мы будем считаться анонимами.
+    authAPI.logout().then(response => { // приходят данные с авториз., withCredentials проверка паторизации.
+        if (response.data.resultCode === 0) { // resultCode это парам. на серваке который отобр. аторизацию, 0 - авторизирован, 1 - нет.
+            dispatch(setAuthUserData(null, null, null, false)); // зануляемся.
+        }
+    })
+}
 
 export default AuthReducer;
