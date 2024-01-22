@@ -85,12 +85,13 @@ export const toggleIsFetching = (isFetching) => ({ type: TOGGLE_IS_FETCHING, isF
 export const toggleIsFollowingProgress = (isFetching, userId) => ({ type: TOGGLE_IS_FOLLOWING_PROGRESS, isFetching, userId });
 
 //---Thunk---
-export const getUsers = (currentPage, pageSize) => { // функция высшего порядка которая возвращает функцию, в которые при вызове передаём 2 аргумента.
+export const requestUsers = (page, pageSize) => { // функция высшего порядка которая возвращает функцию, в которые при вызове передаём 2 аргумента. getUsers БЫЛ ДО РЕФАКТОРА 81УРОК.
     return (dispatch) => { // thunk , санк - это функция которая делает асинхронную работу и внутри кучу диспатчей делает.
         dispatch(toggleIsFetching(true)); // иконка загрузки отображается. Верён action = { type: TOGGLE_IS_FETCHING, isFetching } и прогонит его по UsersReducer.
 
-        usersAPI.getUsers(currentPage, pageSize).then(data => { // ?page - параметры, getUsers() - это вынесеный запрос на сервер(из папки api, называется DAL - data axcess layer, уровень где происх. запровы на серв). Прийдёт только data, а не весь response, см код там почему.
+        usersAPI.getUsers(page, pageSize).then(data => { // ?page - параметры, getUsers() - это вынесеный запрос на сервер(из папки api, называется DAL - data axcess layer, уровень где происх. запровы на серв). Прийдёт только data, а не весь response, см код там почему.
             dispatch(toggleIsFetching(false)); // выключаем иконку загрузки.(диспатчим actioncreator-ы которые возвращают action объект)
+            dispatch(setCurrentPage(page));
             dispatch(setUsers(data.items)); // в setUsers кидаем всех юзеров.
             dispatch(setTotalUsersCount(data.totalCount)); // в setTotalUsersCount кидаем общее кол-во юзеров.
         })// запрос на сервер.
