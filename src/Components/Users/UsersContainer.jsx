@@ -6,11 +6,10 @@ import {follow, unfollow, setCurrentPage, toggleIsFollowingProgress, requestUser
 import {compose} from "redux";
 import {
     getPageSize,
-    getUsers,
     getTotalUsersCount,
     getCurrentPage,
     getIsFetching,
-    getFollowingInProgress
+    getFollowingInProgress, getUsers,
 } from "../../Redux/UsersSelectors";
 
 // КОНТЕЙНЕРНАЯ КОМПОНЕНТА, ИМЕЕТ САМУ КОМПОНЕНТУ КЛАССОВУЮ И ВТОРАЯ КОНТЕЙНЕРНАЯ КОМПОНЕНТА КОТОРАЯ ПОЛУЧАЕТСЯ С ПОМОЩЬЮ CONNECT.
