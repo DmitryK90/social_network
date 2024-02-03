@@ -1,5 +1,4 @@
 import React from 'react';
-import s from './ProfileInfo.module.css';
 
 class ProfileStatus extends React.Component {
     state = {
@@ -31,8 +30,6 @@ class ProfileStatus extends React.Component {
                 status: this.props.status
             })
         }
-        // let a = this.state; // тут можем достучаться к актуальным state.
-        // let b = this.props; // тут можем достучаться к актуальным props.
     }
 
     render() {

@@ -16,11 +16,13 @@ import {
 
 class UsersContainer extends React.Component {
     componentDidMount() {
-        this.props.requestUsers(this.props.currentPage, this.props.pageSize); // вызывает колбэк thunk из UsersReducer. Получить список юзеров, там идёт запрос на сервер.
+        const {currentPage, pageSize} = this.props; // вызывает колбэк thunk из UsersReducer. Получить список юзеров, там идёт запрос на сервер.
+        this.props.getUsers(currentPage, pageSize);
     }
 
     onPageChanged = (pageNumber) => {
-        this.props.requestUsers(pageNumber, this.props.pageSize); // вызывает колбэк thunk из UsersReducer. При перелистывании запрашиваем новых пользователей.
+        const {pageSize} = this.props;
+        this.props.getUsers(pageNumber, pageSize); // вызывает колбэк thunk из UsersReducer. При перелистывании запрашиваем новых пользователей.
     }
 
     render() {
@@ -62,7 +64,7 @@ let mapStateToProps = (state) => {
 }//приходит все в props <Users /> всё достаёт из state
 
 export default compose(
-    connect(mapStateToProps, {follow, unfollow, setCurrentPage, toggleIsFollowingProgress, requestUsers}),
+    connect(mapStateToProps, {follow, unfollow, setCurrentPage, toggleIsFollowingProgress, getUsers: requestUsers}),
     // WithAuthRedirect
 )(UsersContainer);
 // закидывает в <UsersContainer /> пропсы.

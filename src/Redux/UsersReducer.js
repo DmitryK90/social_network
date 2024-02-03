@@ -1,4 +1,4 @@
-import { usersAPI } from '../api/api'
+import {usersAPI} from '../api/api'
 
 const FOLLOW = 'FOLLOW';
 const UNFOLLOW = 'UNFOLLOW';
@@ -24,7 +24,7 @@ const UsersReducer = (state = initialState, action) => {
                 ...state,
                 users: state.users.map(u => {
                     if (u.id === action.userId) {
-                        return { ...u, followed: true }
+                        return {...u, followed: true}
                     }
                     return u;
                 })
@@ -35,7 +35,7 @@ const UsersReducer = (state = initialState, action) => {
                 ...state,
                 users: state.users.map(u => {
                     if (u.id === action.userId) {
-                        return { ...u, followed: false }
+                        return {...u, followed: false}
                     }
                     return u;
                 })
@@ -66,7 +66,7 @@ const UsersReducer = (state = initialState, action) => {
                 ...state,
                 followingInProgress: action.isFetching
                     ? [...state.followingInProgress, action.userId]
-                    : state.followingInProgress.filter(id => id != action.userId)
+                    : state.followingInProgress.filter(id => id !== action.userId)
             }
         }
         default:
@@ -76,40 +76,40 @@ const UsersReducer = (state = initialState, action) => {
     }
 }
 
-export const followSuccess = (userId) => ({ type: FOLLOW, userId }); // userId: userId, в коде сокращенно можно писать если ключ и значение одинаковые.
-export const unfollowSuccess = (userId) => ({ type: UNFOLLOW, userId });
-export const setUsers = (users) => ({ type: SET_USERS, users });
-export const setCurrentPage = (currentPage) => ({ type: SET_CURRENT_PAGE, currentPage });
-export const setTotalUsersCount = (totalUsersCount) => ({ type: SET_TOTAL_USERS_COUNT, count: totalUsersCount });
-export const toggleIsFetching = (isFetching) => ({ type: TOGGLE_IS_FETCHING, isFetching });
-export const toggleIsFollowingProgress = (isFetching, userId) => ({ type: TOGGLE_IS_FOLLOWING_PROGRESS, isFetching, userId });
+export const followSuccess = (userId) => ({type: FOLLOW, userId}); // userId: userId, в коде сокращенно можно писать если ключ и значение одинаковые.
+export const unfollowSuccess = (userId) => ({type: UNFOLLOW, userId});
+export const setUsers = (users) => ({type: SET_USERS, users});
+export const setCurrentPage = (currentPage) => ({type: SET_CURRENT_PAGE, currentPage});
+export const setTotalUsersCount = (totalUsersCount) => ({type: SET_TOTAL_USERS_COUNT, count: totalUsersCount});
+export const toggleIsFetching = (isFetching) => ({type: TOGGLE_IS_FETCHING, isFetching});
+export const toggleIsFollowingProgress = (isFetching, userId) => ({
+    type: TOGGLE_IS_FOLLOWING_PROGRESS,
+    isFetching,
+    userId
+});
 
 //---Thunk---
 export const requestUsers = (page, pageSize) => { // функция высшего порядка которая возвращает функцию, в которые при вызове передаём 2 аргумента. getUsers БЫЛ ДО РЕФАКТОРА 81УРОК.
-    return (dispatch) => { // thunk , санк - это функция которая делает асинхронную работу и внутри кучу диспатчей делает.
+    return async (dispatch) => { // thunk , санк - это функция которая делает асинхронную работу и внутри кучу диспатчей делает.
         dispatch(toggleIsFetching(true)); // иконка загрузки отображается. Верён action = { type: TOGGLE_IS_FETCHING, isFetching } и прогонит его по UsersReducer.
-
-        usersAPI.getUsers(page, pageSize).then(data => { // ?page - параметры, getUsers() - это вынесеный запрос на сервер(из папки api, называется DAL - data axcess layer, уровень где происх. запровы на серв). Прийдёт только data, а не весь response, см код там почему.
-            dispatch(toggleIsFetching(false)); // выключаем иконку загрузки.(диспатчим actioncreator-ы которые возвращают action объект)
-            dispatch(setCurrentPage(page));
-            dispatch(setUsers(data.items)); // в setUsers кидаем всех юзеров.
-            dispatch(setTotalUsersCount(data.totalCount)); // в setTotalUsersCount кидаем общее кол-во юзеров.
-        })// запрос на сервер.
+        let data = await usersAPI.getUsers(page, pageSize); // ?page - параметры, getUsers() - это вынесеный запрос на сервер(из папки api, называется DAL - data axcess layer, уровень где происх. запровы на серв). Прийдёт только data, а не весь response, см код там почему.
+        dispatch(toggleIsFetching(false)); // выключаем иконку загрузки.(диспатчим actioncreator-ы которые возвращают action объект)
+        dispatch(setCurrentPage(page));
+        dispatch(setUsers(data.items)); // в setUsers кидаем всех юзеров.
+        dispatch(setTotalUsersCount(data.totalCount)); // в setTotalUsersCount кидаем общее кол-во юзеров.
     }
 } // по сути эта санк функция импортируется в компонент контейнер, и вызываем её как колбэк функцию передавая в неё аргументы, а она в свою очередь
 //возвращает функцию, которая возвращает при dispatch-е экшен креаторы(т.е. наш action, который выше по коду), и кидает его в наш UsersReducer, и так же делая запрос в
 //наш DAL уровень где проиходит связь с сервером.
 
 export const follow = (userId) => { // функция высшего порядка которая возвращает функцию, в которые при вызове передаём 2 аргумента.
-    return (dispatch) => { // thunk , санк - это функция которая делает асинхронную работу и внутри кучу диспатчей делает.
+    return async (dispatch) => { // thunk , санк - это функция которая делает асинхронную работу и внутри кучу диспатчей делает.
         dispatch(toggleIsFollowingProgress(true, userId)); // отключаем кнопку. 
-        usersAPI.follow(userId) // передаём id пользователя на которого надо подписаться в api.js(наш DAL уровень)
-            .then(response => { // если пользователь добавлен, то в response в одном из параметров серв вернёт resultCode:0, если не ОК resultCode:1
-                if (response.data.resultCode === 0) { // всё ОК, значит вносим изменение ы наш state.
-                    dispatch(followSuccess(userId));
-                }
-                dispatch(toggleIsFollowingProgress(false, userId));
-            });
+        let response = await usersAPI.follow(userId); // передаём id пользователя на которого надо подписаться в api.js(наш DAL уровень)
+        if (response.data.resultCode === 0) { // всё ОК, значит вносим изменение ы наш state, если пользователь добавлен, то в response в одном из параметров серв вернёт resultCode:0, если не ОК resultCode:1
+            dispatch(followSuccess(userId));
+        }
+        dispatch(toggleIsFollowingProgress(false, userId));
     }
 }
 

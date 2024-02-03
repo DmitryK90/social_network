@@ -6,16 +6,15 @@ import {Navigate} from "react-router-dom";
 import {AddMessageFormRedux} from "./AddMessageForm/AddMessageForm";
 // import { addMessageActionCreator, updateNewMessageActionCreator } from '../../Redux/DialogsReducer'
 
-const Dialogs = (props) => { //store приходит только
-    let state = props.dialogsPage;
-    let dialogsElements = state.dialogs.map(d => <DialogItem name={d.name} id={d.id} key={d.id}/>);
-    let messagesElements = state.messages.map(m => <Message message={m.message} key={m.id}/>)
+const Dialogs = ({dialogsPage: {dialogs, messages}, sendMessage, isAuth}) => { //state.dialogsPage приходит.
+    let dialogsElements = dialogs.map(d => <DialogItem name={d.name} id={d.id} key={d.id}/>);
+    let messagesElements = messages.map(m => <Message message={m.message} key={m.id}/>)
 
     let addNewMessage = (values) => { // в values объекте будут свойства, такие как у Field.
-        props.sendMessage(values.NewMessageBody);// values.NewMessageBody будет введёное значение лежать.
+        sendMessage(values.NewMessageBody);// values.NewMessageBody будет введёное значение лежать.
     }
 
-    if (!props.isAuth) return <Navigate to={'/login'}/> // компонента из react-router-dom которая делает редирект на Login, если не залогиненый(isAuth = false)
+    if (!isAuth) return <Navigate to={'/login'}/> // компонента из react-router-dom которая делает редирект на Login, если не залогиненый(isAuth = false)
 
     return (
         <div className={style.dialogs}>
