@@ -7,9 +7,9 @@ import {Textarea} from "../../common/FormsControls/FormsControls";
 
 const maxLength50 = maxLengthCreator(50)
 
-const AddMessageForm = (props) => {
+const AddMessageForm = ({handleSubmit}) => {
     return (
-        <form onSubmit={props.handleSubmit}>
+        <form onSubmit={handleSubmit}>
             <div className={style.tb}>
                 <Field component={Textarea} validate={[required, maxLength50]} name='NewMessageBody' placeholder="Введите сообщение"/>
                 <button className={style.addMessage}>Добавить</button>

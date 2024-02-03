@@ -7,13 +7,13 @@ import {login} from "../../Redux/AuthReducer";
 import {Navigate} from "react-router-dom";
 import style from './../common/FormsControls/FormsControls.module.css'
 
-const LoginForm = (props) => {
+const LoginForm = ({handleSubmit, error}) => {
     return ( // Field аналог input в библ. redux-form. Name - под этим свойством уйдёт на сервак.
         //handleSubmit - спец. пропс который даёт redux-form.(он не даст перезагр.страницы, т.к. где-то внутри
         // написан e.preventDafault, т.е. отменить действие по умолчанию), так же в нём идёт сбор всех данных и
         // упоковывается в объект, и контейнерная компонента вызывает props.onSubmit(formData(все значения
         // из формы)), что вот они данные и их засабмитили из формы.
-        <form onSubmit={props.handleSubmit}>
+        <form onSubmit={handleSubmit}>
             <div>
                 <Field placeholder={'Email'}
                        name={'email'}
@@ -32,7 +32,7 @@ const LoginForm = (props) => {
                        name={'rememberMe'}
                        component={Input}/> remember me
             </div>
-            {props.error && <div className={style.formSummaryError}>Error</div>}
+            {error && <div className={style.formSummaryError}>{error}</div>}
             <div>
                 <button>Login</button>
             </div>
