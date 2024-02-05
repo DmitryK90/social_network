@@ -2,7 +2,6 @@ import React from "react";
 import styles from './Users.module.css'
 import userPhoto from '../../Image/Asset6.jpg'
 import {NavLink} from "react-router-dom";
-import Paginator from "../common/Paginator/Paginator";
 
 //ЧИСТАЯ КОМПОНЕНТА, ВСЁ ЧТО ТРЕБУЕТСЯ ПОЛУЧАЕТ ЧЕРЕЗ PROPS.
 
