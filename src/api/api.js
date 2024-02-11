@@ -35,6 +35,15 @@ export const profileAPI = {
     updateStatus(status) {
         return instance.put(`profile/status`, {status: status}); // можно написать{status}, т.к. ключ и знач. одинаковые.
     },// в куки зашит пользователь, так что не отправляем id. Второй параметр json файл, см.докумнт к серверу.
+    savePhoto(photoFile) {
+        const formData = new FormData(); // FormData для отправки файлов используется.
+        formData.append('image', photoFile); // док.серв.
+        return instance.put('profile/photo', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+    }, // загрузка фото профиля на сервер. (.put('profile/photo'... - см. докум. сервера))
 }
 
 export const authAPI = {
