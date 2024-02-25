@@ -1,7 +1,7 @@
 import React from "react";
 import Profile from "./Profile";
 import {connect} from "react-redux";
-import {getStatus, getUserProfile, updateStatus, savePhoto} from '../../Redux/ProfileReducer'
+import {getStatus, getUserProfile, updateStatus, savePhoto, saveProfile} from '../../Redux/ProfileReducer'
 import {useParams} from "react-router-dom";
 import {WithAuthRedirect} from "../../hoc/withAuthRedirect";
 import {compose} from "redux";
@@ -43,7 +43,9 @@ class ProfileContainer extends React.Component {
                      savePhoto={this.props.savePhoto} // загрузка фото.
                      profile={this.props.profile}
                      status={this.props.status}
-                     updateStatus={this.props.updateStatus}/>
+                     updateStatus={this.props.updateStatus}
+                     saveProfile={this.props.saveProfile}
+            />
         )
     }// {...this.props} - раскукоживаем все приходящие пропсы и отправляем дальше в Profile.
     // isOwner - проверка, владелец ли страницы. !! - приводит к булевому true/false.
@@ -57,7 +59,7 @@ let mapStateToProps = (state) => ({
 })
 
 export default compose(
-    connect(mapStateToProps, {getUserProfile, getStatus, updateStatus, savePhoto}),
+    connect(mapStateToProps, {getUserProfile, getStatus, updateStatus, savePhoto, saveProfile}),
     withRouter,
     WithAuthRedirect
 )(ProfileContainer); // ()() два вызова функции compose, вторые () означают вызов того, что вернули первые(), а не вызов два раза одинакового compose.

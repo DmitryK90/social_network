@@ -44,21 +44,30 @@ export const profileAPI = {
             }
         })
     }, // загрузка фото профиля на сервер. (.put('profile/photo'... - см. докум. сервера))
+    saveProfile(profile) {
+        return instance.put(`profile/`, profile);
+    }
 }
 
 export const authAPI = {
     me() {
         return instance.get(`auth/me`);
     },
-    login(email, password, rememberMe = false) {
-        return instance.post(`auth/login`, { email, password, rememberMe }); // в данном случае на серв.ещё отправляем объект с данными.
+    login(email, password, rememberMe = false, captcha = null) {
+        return instance.post(`auth/login`, { email, password, rememberMe, captcha }); // в данном случае на серв.ещё отправляем объект с данными.
             // с каким надо смотреть документацию на серваке, что он должен принимать.
     },
     logout(email, password, rememberMe = false) {
         return instance.delete(`auth/login`); // в данном случае на серв.ещё отправляем объект с данными.
         // с каким надо смотреть документацию на серваке, что он должен принимать.
     }
-} 
+}
+
+export const securityAPI = {
+    getCaptchaUrl() {
+        return instance.get(`security/get-captcha-url`);
+    }
+}
 
 
 
