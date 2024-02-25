@@ -7,7 +7,7 @@ import {login} from "../../Redux/AuthReducer";
 import {Navigate} from "react-router-dom";
 import style from './../common/FormsControls/FormsControls.module.css'
 
-const LoginForm = ({handleSubmit, error}) => {
+const LoginForm = ({handleSubmit, error, captchaUrl}) => {
     return ( // Field аналог input в библ. redux-form. Name - под этим свойством уйдёт на сервак.
         //handleSubmit - спец. пропс который даёт redux-form.(он не даст перезагр.страницы, т.к. где-то внутри
         // написан e.preventDafault, т.е. отменить действие по умолчанию), так же в нём идёт сбор всех данных и
@@ -32,6 +32,9 @@ const LoginForm = ({handleSubmit, error}) => {
                        name={'rememberMe'}
                        component={Input}/> remember me
             </div>
+            {captchaUrl && <img src={captchaUrl} />}
+            {captchaUrl && <Field placeholder={'Symbols from image'} name={'captcha'} validate={[required]} component={Input} />}
+
             {error && <div className={style.formSummaryError}>{error}</div>}
             <div>
                 <button>Login</button>
@@ -46,7 +49,7 @@ const LoginReduxForm = reduxForm({ // оборачиваем компонент�
 
 const Login = (props) => { // сюда приходит ещё колбэк login(не thunk creator, он в connect-е обрабатывается, а сюда уже сам колбэк приходит).
     const onSubmit = (formData) => {
-        props.login(formData.email, formData.password, formData.rememberMe)
+        props.login(formData.email, formData.password, formData.rememberMe, formData.captcha)
     }
 
     if(props.isAuth) { // если залогинились, то редирект на страницу Profile.
@@ -54,12 +57,13 @@ const Login = (props) => { // сюда приходит ещё колбэк logi
     }
     return <div>
         <h1>Login</h1>
-        <LoginReduxForm onSubmit={onSubmit}/>
+        <LoginReduxForm onSubmit={onSubmit} captchaUrl={props.captchaUrl} />
     </div>
 }
 
 const mapStateToProps = (state) => {
     return {
+        captchaUrl: state.auth.captchaUrl,
         isAuth: state.auth.isAuth
     }
 }
