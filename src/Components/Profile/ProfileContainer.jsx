@@ -9,7 +9,7 @@ import {compose} from "redux";
 export function withRouter(Children) { // Children - передаём внутрь нашу компоненту.
     return (props) => {
         const match = {params: useParams()}; // тут будет id юзера.
-        return <Children {...props} match={match}/> // в ProfileContainer передаём помимо всех props ещё match=id юзера, и возвращаем обновленную компоненту.
+        return <Children {...props} match={match}/> // в ProfileContainer передаём помимо всех props ещё match=id юзера(из withRouter), и возвращаем обновленную компоненту.
     }
 }
 

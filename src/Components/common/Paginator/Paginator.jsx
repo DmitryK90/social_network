@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import styles from "./Paginator.module.css";
-import cn from "classnames";
+import cn from "classnames"; // упрощает использование нескольких классов, удобно при склеивании двух классов без шаблонной строки и тд.
 
 let Paginator = ({totalItemsCount, pageSize, currentPage, onPageChanged, portionSize = 10}) => {
 
