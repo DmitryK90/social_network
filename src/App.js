@@ -5,7 +5,7 @@ import Profile from './Components/Profile/Profile';
 import DialogsContainer from './Components/Dialogs/DialogsContainer';
 import ProfileContainer from './Components/Profile/ProfileContainer';
 // import UsersContainer from './Components/Users/UsersContainer';
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 import HeaderContainer from './Components/Header/HeaderContainer';
 import LoginPage from './Components/Login/Login';
 import {connect} from "react-redux";
@@ -17,9 +17,18 @@ const UsersContainer = React.lazy(() => import('./Components/Users/UsersContaine
 // и обернуть этот компонент в Suspense в return.(в Suspense можно оборачивать несколько компонентов.)
 
 class App extends React.Component {
+    catchAllUnhandleErrors = (promiseRejectionEvent) => {
+        alert('Some error occured');
+        console.error(promiseRejectionEvent);
+    }
 
     componentDidMount() {
         this.props.initializeApp()
+        window.addEventListener('unhandledrejection', this.catchAllUnhandleErrors)// обработка промисов.
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('unhandledrejection', this.catchAllUnhandleErrors)
     }
 
     render() { // store и state приходят. state - где наши данные. store - функции диспатч и тд.
@@ -35,6 +44,7 @@ class App extends React.Component {
                     <Navbar/>
                     <div className='app-wrapper-content'>
                         <Routes>
+                            <Route path='/' element={<Navigate to='/profile/'/>}/>
                             <Route path='/dialogs*' element={<DialogsContainer/>}/>
                             <Route path='/profile/:userId?' element={<ProfileContainer/>}/>
                             <Route path='/users' element={
@@ -45,12 +55,14 @@ class App extends React.Component {
                             <Route path='/news' element={<Profile/>}/>
                             <Route path='/music' element={<Profile/>}/>
                             <Route path='/settings' element={<Profile/>}/>
-                            <Route path='/login' element={<LoginPage/>}></Route>
+                            <Route path='/login' element={<LoginPage/>}/>
+                            <Route path='*' element={<div>404 NOT FAUND</div>} />
                         </Routes>
                     </div>
                 </div>
             </BrowserRouter>
         ); // /:userId? - параметр, ? - необязательный.
+        // перед path можно добавить exact, что даст точное софпадение с url.
     }
 }
 
