@@ -6,7 +6,7 @@ import usersReducer from './UsersReducer';
 import authReducer from './AuthReducer';
 import {reducer as formReducer} from 'redux-form'; // для создания и отправки форм.
 import {thunk} from 'redux-thunk';
-import AppReducer from "./AppReducer";
+import AppReducer from "./AppReducer.ts";
 
 let reducers = combineReducers({
     profilePage: profileReducer,
